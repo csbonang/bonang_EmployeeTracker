@@ -1,11 +1,15 @@
+// access db 
 const mysql = require('mysql');
+// needed to prompt user 
 const inquirer = require('inquirer');
+// to access password 
 const projPassword = require('./password'); 
+// terminal colors 
 const chalk = require('chalk'); 
 const connection = mysql.createConnection({
     host: 'localhost',
 
-    // Your port; if not 3306
+    // port # 
     port: 3306,
 
     // Your username
@@ -36,7 +40,7 @@ function viewDepartment() {
     })
 
 }
-// views roles 
+// views roles:: views all the roles stores in db 
 function viewRoles()
 {
     console.log('View Roles')
@@ -48,7 +52,7 @@ function viewRoles()
         direction();
     })
 }
-// views employees 
+// views employees:: views all the employees in db 
 function viewEmployees()
 {
     console.log('View Employees')
@@ -62,7 +66,7 @@ function viewEmployees()
 
 }
 
-// user is prompted to add a department 
+// addDepartment:: adds a department to the db  
 function addDepartment()
 {
     inquirer.prompt([
@@ -88,15 +92,14 @@ function addDepartment()
 
 }
 
-// add roles 
+// addRoles:: adds a role to the db 
 function addRoles()
 {
+    // selecting all the roles from the role table 
     connection.query("SELECT * FROM employee_managementdb.department;", (err, data) => {
-        // map through the information that we get back 
-        // selecting all the roles from the role table 
+        
+        
         // map through it, so that we can pull out each role 
-
-        // or you can do console.table(data); 
         // values returned to roleChoices 
         let departmentIndex = {};
         const departmentChoices = data.map((department) => {
@@ -105,7 +108,7 @@ function addRoles()
                 name: department.name
             }
         })
-    
+            // prompt the user 
             inquirer.prompt([
                 {
                     name: "title",
@@ -140,14 +143,10 @@ function addRoles()
 }
 
 
-// adds an employee
+// addEmployee:: adds an employee
 function addEmployee() {
     connection.query("Select * from role", (err, data) => {
-        // map through the information that we get back 
-        // selecting all the roles from the role table 
-        // map through it, so that we can pull out each role 
-
-        // or you can do console.table(data); 
+         // map through it, so that we can pull out each role 
         // values returned to roleChoices 
         const roleChoices = data.map((role) => {
             return {
@@ -206,23 +205,15 @@ function addEmployee() {
                     )
                 })
         })
-        // connection.query('INSERT INTO employee SET ?', (err,data) => {
-        // TODO: finc managers 
-        // prompt the user 
-        // 
-        //     if(err) throw err; 
-        //     // displays the table 
-        //     console.table(data); 
-        //     // display menu again 
-
     })
 }
 
 
-// display all the employees
-// choose which employee uer wish to choose 
-// display all the roles 
-// update statement 
+// updateEmployeeRole :: 
+    // display all the employees
+    // choose which employee uer wish to choose 
+    // display all the roles 
+    // update statement 
 function updateEmployeeRole()
 {
     connection.query('SELECT * FROM employee', (err, data) => {
@@ -290,7 +281,7 @@ function updateEmployeeRole()
 }
 
 
-// displays the menu of employee management 
+// direction:: displays the menu of employee management 
 function direction() {
     inquirer.prompt({
         name: "direction",
@@ -361,8 +352,6 @@ function beginning() {
 
 
     ); 
-    
-    //TO display everything is our db 
     connection.query('SELECT * FROM employee', (err, data) => {
         if (err) throw err;
         console.table(data);
