@@ -87,50 +87,57 @@ function addDepartment()
 
 }
 
-
-
-// display all the employees
-// choose which employee uer wish to choose 
-// display all the roles 
-// update statement 
-function updateEmployeeRole()
+// add roles 
+function addRoles()
 {
-    connection.query('SELECT * FROM employee', (err, data) => {
-        if (err) throw err;
-        const roleEmployees = data.map((employee) => {
-            return({
-                name:employee.first_name,
-                value:employee.id,
-                roleID: employee.role_id
-            })
-        })
-        // displays the table 
-        console.table(roleEmployees);
-        inquirer.prompt([
-            {
-                type:"list",
-                message:"choose employee",
-                choices:roleEmployees,
-                name:'empId'
+    connection.query("SELECT * FROM employee_managementdb.department;", (err, data) => {
+        // map through the information that we get back 
+        // selecting all the roles from the role table 
+        // map through it, so that we can pull out each role 
+
+        // or you can do console.table(data); 
+        // values returned to roleChoices 
+        let departmentIndex = {};
+        const departmentChoices = data.map((department) => {
+            departmentIndex[department.name] = department.id;
+            return {
+                name: department.name
             }
-        ]).then(response=>{
-            connection.query('update employee set ? where ?;', 
-            [
+        })
+    
+            inquirer.prompt([
                 {
-                    role_id: response.empId
-                }, 
+                    name: "title",
+                    message: "Enter the employee's title: ",
+                    type: "input"
+                },
                 {
-                    id: response.name
+                    name: "salary",
+                    message: "Enter the employee's salary: ",
+                    type: "input"
+                },
+                {
+                    // TODO
+                    name: "departmentID",
+                    message: "Enter the employee's department id: ",
+                    type: "list",
+                    choices: departmentChoices
                 }
             ])
-            console.log(response); 
-            beginning(); 
-
-        })
+                .then((response) => {
+                    console.log(response)
+                    connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?); ",
+                        [response.title, response.salary, departmentIndex[response.departmentID]],
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log(res);
+                            beginning();
+                        }
+                    )
+                })
     })
-
-   
 }
+
 
 // adds an employee
 function addEmployee() {
@@ -184,7 +191,6 @@ function addEmployee() {
 
                 }
 
-
             ])
                 .then((response) => {
                     console.log(response)
@@ -211,6 +217,51 @@ function addEmployee() {
     })
 }
 
+
+// display all the employees
+// choose which employee uer wish to choose 
+// display all the roles 
+// update statement 
+function updateEmployeeRole()
+{
+    connection.query('SELECT * FROM employee', (err, data) => {
+        if (err) throw err;
+        const roleEmployees = data.map((employee) => {
+            return({
+                name:employee.first_name,
+                value:employee.id,
+                roleID: employee.role_id
+            })
+        })
+        // displays the table 
+        console.table(roleEmployees);
+        inquirer.prompt([
+            {
+                type:"list",
+                message:"choose employee",
+                choices:roleEmployees,
+                name:'empId'
+            }
+        ]).then(response=>{
+            connection.query('update employee set ? where ?;', 
+            [
+                {
+                    role_id: response.empId
+                }, 
+                {
+                    id: response.name
+                }
+            ])
+            console.log(response); 
+            beginning(); 
+
+        })
+    })
+
+   
+}
+
+
 // displays the menu of employee management 
 function direction() {
     inquirer.prompt({
@@ -236,6 +287,7 @@ function direction() {
                 addDepartment(); 
                 break;
             case "Add Roles":
+                addRoles(); 
                 break;
             case "Add Employees":
                 addEmployee();
