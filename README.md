@@ -26,7 +26,8 @@ Upon opening the application, a menu prompts the user whether they would like to
 * [Questions](#questions)
 
 ## Video 
-Video Link: 
+Video Link: https://drive.google.com/file/d/1xYqJ6UZF6jletF50QqRjzoXB9J3iH_vJ/view?usp=sharing
+
 ## Installation 
 To install the necessary dependencies, run the following command:
 npm install mysql 
