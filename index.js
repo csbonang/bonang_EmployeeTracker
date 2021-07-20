@@ -23,7 +23,7 @@ connection.connect((err) => {
     //   createProduct();
     beginning();
 });
-
+// views departments 
 function viewDepartment() {
     console.log('View Department function');
     connection.query('SELECT * FROM department', (err, data) => {
@@ -35,7 +35,7 @@ function viewDepartment() {
     })
 
 }
-
+// views roles 
 function viewRoles()
 {
     console.log('View Roles')
@@ -47,9 +47,21 @@ function viewRoles()
         direction();
     })
 }
+// views employees 
+function viewEmployees()
+{
+    console.log('View Employees')
+    connection.query('SELECT * FROM employee_managementdb.employee', (err, data) => {
+        if (err) throw err;
+        // displays the table 
+        console.table(data);
+        // display menu again 
+        direction();
+    })
 
+}
 
-
+// user is prompted to add a department 
 function addDepartment()
 {
     inquirer.prompt([
@@ -81,7 +93,6 @@ function addDepartment()
 // choose which employee uer wish to choose 
 // display all the roles 
 // update statement 
-
 function updateEmployeeRole()
 {
     connection.query('SELECT * FROM employee', (err, data) => {
@@ -102,12 +113,6 @@ function updateEmployeeRole()
                 choices:roleEmployees,
                 name:'empId'
             }
-            // ,{
-            //     type:"list", 
-            //     message: "Update role_id to: ", 
-            //     choices:roleEmployees.roleID, 
-            //     name:'role_id'
-            // }
         ]).then(response=>{
             connection.query('update employee set ? where ?;', 
             [
@@ -127,7 +132,7 @@ function updateEmployeeRole()
    
 }
 
-
+// adds an employee
 function addEmployee() {
     connection.query("Select * from role", (err, data) => {
         // map through the information that we get back 
@@ -206,7 +211,7 @@ function addEmployee() {
     })
 }
 
-// primpt the user 
+// displays the menu of employee management 
 function direction() {
     inquirer.prompt({
         name: "direction",
@@ -222,7 +227,8 @@ function direction() {
             case 'View Roles':
                 viewRoles(); 
                 break;
-            case 'View Employee':
+            case 'View Employees':
+                viewEmployees(); 
                 break;
             case 'Add Department':
                 //   add values going into schema
