@@ -230,32 +230,59 @@ function updateEmployeeRole()
             return({
                 name:employee.first_name,
                 value:employee.id,
-                roleID: employee.role_id
+                roleID: employee.role_id, 
+                short: "Please check out the updated table after completing the prompt"
             })
         })
-        // displays the table 
-        console.table(roleEmployees);
+
+        connection.query('SELECT * FROM role', (err, data) => {
+        const roles = data.map((role) => 
+        {
+            return({
+                // returns whatever is listed  
+                value: role.id,
+                name: role.title
+            })
+
+        })
         inquirer.prompt([
             {
                 type:"list",
-                message:"choose employee",
-                choices:roleEmployees,
+                message:"Choose employee: ",
+                choices: roleEmployees,
                 name:'empId'
+            },
+            {
+                type: "list",
+                message: "Select role to update to:", 
+                choices: roles, 
+                name: 'userRole'
             }
         ]).then(response=>{
+            console.log(response.userRole); 
+            console.log(response.empId); 
             connection.query('update employee set ? where ?;', 
             [
                 {
-                    role_id: response.empId
+                    role_id: response.userRole
                 }, 
                 {
-                    id: response.name
+                    id: response.empId
                 }
-            ])
-            console.log(response); 
+            ], 
+            (err) => 
+            {
+                if(err) throw err; 
+                console.log(response.userRole.id); 
+                console.log(response.empId.value); 
+            }
+
+            )
             beginning(); 
 
         })
+        // added 
+       })
     })
 
    
@@ -306,6 +333,14 @@ function direction() {
 }
 
 function beginning() {
+    // alert( "/".match(new RegExp("/")) );
+    // console.log("_____       ___  ___   _____   _       _____  __    __  _____   _____            ___  ___       ___   __   _       ___   _____   _____   _____ "); 
+    // console.log("| ____|     /   |/   | |  _  \ | |     /  _  \ \ \  / / | ____| | ____|          /   |/   |     /   | |  \ | |     /   | /  ___| | ____| |  _ \ "); 
+    // console.log("| |__      / /|   /| | | |_| | | |     | | | |  \ \/ /  | |__   | |__           / /|   /| |    / /| | |   \| |    / /| | | |     | |__   | |_| | "); 
+    // console.log("|  __|    / / |__/ | | |  ___/ | |     | | | |   \  /   |  __|  |  __|         / / |__/ | |   / / | | | |\   |   / / | | | |  _  |  __|  |  _  / "); 
+    // console.log("| |___   / /       | | | |     | |___  | |_| |   / /    | |___  | |___        / /       | |  / /  | | | | \  |  / /  | | | |_| | | |___  | | \ \ "); 
+    // console.log("|_____| /_/        |_| |_|     |_____| \_____/  /_/     |_____| |_____|      /_/        |_| /_/   |_| |_|  \_| /_/   |_| \_____/ |_____| |_|  \_\ ");                     
+    
     //TO display everything is our db 
     connection.query('SELECT * FROM employee', (err, data) => {
         if (err) throw err;
