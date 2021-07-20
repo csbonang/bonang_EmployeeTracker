@@ -36,6 +36,96 @@ function viewDepartment() {
 
 }
 
+function viewRoles()
+{
+    console.log('View Roles')
+    connection.query('SELECT * FROM employee_managementdb.role', (err, data) => {
+        if (err) throw err;
+        // displays the table 
+        console.table(data);
+        // display menu again 
+        direction();
+    })
+}
+
+
+
+function addDepartment()
+{
+    inquirer.prompt([
+        {
+            name: "departmentName", 
+            message:'Enter department name you wish to add: ',
+            type: 'input'
+        }
+    ])
+    .then (response => 
+    {
+        console.log(response); 
+        connection.query("INSERT INTO department (name)VALUES (?); ",
+                       response.departmentName, 
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log(res);
+                            beginning();
+
+                        }
+                    )
+    })
+
+}
+
+
+
+// display all the employees
+// choose which employee uer wish to choose 
+// display all the roles 
+// update statement 
+
+function updateEmployeeRole()
+{
+    connection.query('SELECT * FROM employee', (err, data) => {
+        if (err) throw err;
+        const roleEmployees = data.map((employee) => {
+            return({
+                name:employee.first_name,
+                value:employee.id,
+                roleID: employee.role_id
+            })
+        })
+        // displays the table 
+        console.table(roleEmployees);
+        inquirer.prompt([
+            {
+                type:"list",
+                message:"choose employee",
+                choices:roleEmployees,
+                name:'empId'
+            }
+            // ,{
+            //     type:"list", 
+            //     message: "Update role_id to: ", 
+            //     choices:roleEmployees.roleID, 
+            //     name:'role_id'
+            // }
+        ]).then(response=>{
+            connection.query('update employee set ? where ?;', 
+            [
+                {
+                    role_id: response.empId
+                }, 
+                {
+                    id: response.name
+                }
+            ])
+            console.log(response); 
+            beginning(); 
+
+        })
+    })
+
+   
+}
 
 
 function addEmployee() {
@@ -75,6 +165,7 @@ function addEmployee() {
                     type: "input"
                 },
                 {
+                    // TODO
                     name: "roleID",
                     message: "Enter the employee's role id: ",
                     type: "list",
@@ -129,13 +220,14 @@ function direction() {
                 viewDepartment();
                 break;
             case 'View Roles':
+                viewRoles(); 
                 break;
             case 'View Employee':
                 break;
             case 'Add Department':
                 //   add values going into schema
                 // INSERT INTO products SET ? 
-
+                addDepartment(); 
                 break;
             case "Add Roles":
                 break;
@@ -143,6 +235,7 @@ function direction() {
                 addEmployee();
                 break;
             case "Update Employee's Role":
+                updateEmployeeRole(); 
                 break;
             // Exit
             default:
@@ -162,3 +255,5 @@ function beginning() {
         direction();
     })
 }
+
+
