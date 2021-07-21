@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Developer's Profile
+Programmer: Clarisse Bonang <br> 
 [GitHub](https://github.com/csbonang)
  
 ## Description 
